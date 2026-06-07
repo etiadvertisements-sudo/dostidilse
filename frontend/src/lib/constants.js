@@ -5,22 +5,23 @@ export const CONTACT_EMAIL = "connect@dostidilse.org";
 export const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
 
-// Indian-context Unsplash photos — stable photo IDs (no expiring ixid tokens).
+// All photo IDs below verified loading (200 OK on images.unsplash.com).
+// Indian / South Asian context where possible — community, children, classrooms.
 export const IMAGES = {
-  // Indian school children — bright, hopeful (hero)
+  // Hero — Indian children with hands raised, joyful
   hero_kids: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1200&q=80",
-  // Indian children in a doorway
-  kids_looking: "https://images.unsplash.com/photo-1610208693777-da41b6f1f76a?auto=format&fit=crop&w=1200&q=80",
-  // Indian children smiling together
-  kids_smile: "https://images.unsplash.com/photo-1591025207161-9d6b56ce6f97?auto=format&fit=crop&w=1200&q=80",
-  // Indian schoolgirl studying
+  // Children reading / kindness (community hands)
+  kids_looking: "https://images.unsplash.com/photo-1604881991720-f91add269bed?auto=format&fit=crop&w=1200&q=80",
+  // Kids together, classroom warmth
+  kids_smile: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=1200&q=80",
+  // Girl studying / classroom
   kids_studying: "https://images.unsplash.com/photo-1497486751825-1233686d5d80?auto=format&fit=crop&w=1200&q=80",
-  // Hands planting a sapling (nature)
+  // Hands planting a sapling
   nature_planting: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1200&q=80",
-  // Indian classroom / village school
+  // Schoolyard / classroom interior
   village_school: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80",
-  // Diyas / festival lamps — quiet emotional accent
-  diya_lights: "https://images.unsplash.com/photo-1574087220842-30b53d22dd5d?auto=format&fit=crop&w=1200&q=80",
-  // Indian woman holding child (community / family)
+  // Warm soft community accent (replaces broken diyas)
+  diya_lights: "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=1200&q=80",
+  // Mother / child / family
   mother_child: "https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?auto=format&fit=crop&w=1200&q=80",
 };
