@@ -16,12 +16,19 @@ Clone https://github.com/etiadvertisements-sudo/dostidilse into /app and make it
 
 ## Setup Done (Jan 2026)
 - Cloned repo into `/app` (preserved `.git`, `.emergent`)
-- Created `/app/backend/.env` with MONGO_URL, DB_NAME, JWT_SECRET, ADMIN credentials (Razorpay/Resend keys left empty)
+- Created `/app/backend/.env` with MONGO_URL, DB_NAME, JWT_SECRET, ADMIN credentials, RESEND_API_KEY
 - Created `/app/frontend/.env` with REACT_APP_BACKEND_URL pointing to preview URL
-- Installed Python deps via pip (per repo `requirements.txt`)
-- Installed JS deps via `yarn install`
-- Restarted backend + frontend via supervisor — both RUNNING
-- Verified: `GET /api/` returns greeting; `GET /api/donations/stats` returns zeroed stats; homepage renders correctly
+- Installed Python deps via pip + JS deps via yarn; supervisor RUNNING
+
+## Feature added — Coordinator Applications (Jan 2026)
+- Public page at `/join` with hero + multi-section application form (about you, location, story)
+- Fields: name, email, phone, city, state, role preference (city/state), occupation, age, profile link, photo, why_join, impact_goal, monthly_hours, past experience, referral source
+- Backend: `POST /api/coordinators/apply` (public, with dup-pending guard), admin: list / approve / reject / delete
+- Emails (via Resend, fire-and-forget):
+  - On submit → acknowledgement email to applicant
+  - On admin approval → "Welcome to the family" email
+- Admin Dashboard: new "Coordinators" tab with filter (Pending/Approved/Rejected/All), expand-to-view details, Approve / Reject / Delete actions
+- "Join Us" link added to main nav (desktop + mobile)
 
 ## Default Credentials
 - Admin email: `admin@dostidilse.org`

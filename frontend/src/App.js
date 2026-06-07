@@ -5,6 +5,7 @@ import Home from "@/pages/Home";
 import About from "@/pages/About";
 import ContactPage from "@/pages/ContactPage";
 import ProjectsPage from "@/pages/ProjectsPage";
+import CoordinatorJoinPage from "@/pages/CoordinatorJoinPage";
 import AdminLogin from "@/pages/AdminLogin";
 import AdminDashboard from "@/pages/AdminDashboard";
 import MusicPlayer from "@/components/ddls/MusicPlayer";
@@ -26,6 +27,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/join" element={<CoordinatorJoinPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
         </Routes>

@@ -5,7 +5,7 @@ import { apiClient, fileToBase64 } from "@/lib/api";
 import { LOGO_URL } from "@/lib/constants";
 import {
   LogOut, Plus, Pencil, Trash2, Calendar, MapPin, Users,
-  LayoutGrid, Heart, MessageSquare, Loader2, X, Camera, Wallet, UserCircle2,
+  LayoutGrid, Heart, MessageSquare, Loader2, X, Camera, Wallet, UserCircle2, UserPlus,
 } from "lucide-react";
 
 const EMPTY_PROJECT = {
@@ -583,6 +583,186 @@ function TeamTab() {
   );
 }
 
+function CoordinatorsTab() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("pending");
+  const [busyId, setBusyId] = useState(null);
+  const [openId, setOpenId] = useState(null);
+
+  const load = () => {
+    setLoading(true);
+    const q = filter === "all" ? "" : `?status=${filter}`;
+    apiClient.get(`/admin/coordinators${q}`).then((r) => setItems(r.data || [])).finally(() => setLoading(false));
+  };
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [filter]);
+
+  const approve = async (id) => {
+    setBusyId(id);
+    try {
+      await apiClient.post(`/admin/coordinators/${id}/approve`);
+      toast.success("Approved. Welcome email sent.");
+      load();
+    } catch (e) {
+      toast.error(e.response?.data?.detail || "Could not approve");
+    } finally { setBusyId(null); }
+  };
+  const reject = async (id) => {
+    if (!window.confirm("Reject this application? They will not be notified by email.")) return;
+    setBusyId(id);
+    try {
+      await apiClient.post(`/admin/coordinators/${id}/reject`);
+      toast.success("Application rejected");
+      load();
+    } catch (e) {
+      toast.error(e.response?.data?.detail || "Could not reject");
+    } finally { setBusyId(null); }
+  };
+  const remove = async (id) => {
+    if (!window.confirm("Delete this application permanently?")) return;
+    setBusyId(id);
+    try {
+      await apiClient.delete(`/admin/coordinators/${id}`);
+      toast.success("Deleted");
+      load();
+    } catch (e) {
+      toast.error(e.response?.data?.detail || "Could not delete");
+    } finally { setBusyId(null); }
+  };
+
+  const filters = [
+    { key: "pending", label: "Pending" },
+    { key: "approved", label: "Approved" },
+    { key: "rejected", label: "Rejected" },
+    { key: "all", label: "All" },
+  ];
+
+  const statusPill = (s) => {
+    const map = {
+      pending: "bg-[#D99F80]/15 text-[#D99F80]",
+      approved: "bg-[#5A8896]/10 text-[#5A8896]",
+      rejected: "bg-[#C77373]/15 text-[#C77373]",
+    };
+    return <span className={`px-2.5 py-0.5 rounded-full text-xs ${map[s] || ""}`}>{s}</span>;
+  };
+
+  return (
+    <div data-testid="admin-coordinators-tab">
+      <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
+        <div>
+          <h2 className="font-serif text-3xl text-[#2C3E42]">Coordinator Applications</h2>
+          <p className="text-sm text-[#5C757B] mt-1">Approve to send a welcome-to-the-family email. Rejecting is silent.</p>
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          {filters.map((f) => (
+            <button
+              key={f.key}
+              data-testid={`coord-filter-${f.key}`}
+              onClick={() => setFilter(f.key)}
+              className={`text-sm px-4 py-2 rounded-full transition ${
+                filter === f.key ? "bg-[#5A8896] text-white" : "bg-white border border-[#EBE7E0] text-[#5C757B] hover:border-[#5A8896]/50"
+              }`}
+            >{f.label}</button>
+          ))}
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="text-center text-[#5C757B] py-10">Loading…</div>
+      ) : items.length === 0 ? (
+        <div className="bg-white border border-[#EBE7E0] rounded-[1.5rem] p-10 text-center">
+          <p className="text-[#5C757B]">No applications in this view.</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {items.map((c) => {
+            const isOpen = openId === c.id;
+            return (
+              <div key={c.id} data-testid={`coord-row-${c.id}`} className="bg-white border border-[#EBE7E0] rounded-2xl p-5">
+                <div className="flex gap-4 items-start">
+                  <div className="w-14 h-14 rounded-full bg-[#F2EFE9] overflow-hidden flex-shrink-0">
+                    {c.photo_base64 ? (
+                      <img src={c.photo_base64} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-[#D99F80]/60"><UserCircle2 size={24} /></div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-medium text-[#2C3E42]">{c.name}</span>
+                      {statusPill(c.status)}
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-[#F2EFE9] text-[#5C757B] uppercase tracking-wider">
+                        {c.role_preference === "city" ? "City coord." : "State coord."}
+                      </span>
+                    </div>
+                    <div className="text-xs text-[#5C757B] mt-1 flex items-center gap-3 flex-wrap">
+                      <span><MapPin size={11} className="inline mr-1" />{c.city}, {c.state}</span>
+                      <span>{c.email}</span>
+                      <span>{c.phone}</span>
+                      <span>{c.monthly_hours}h/month</span>
+                      <span>{new Date(c.created_at).toLocaleString()}</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 flex-wrap justify-end">
+                    {c.status === "pending" && (
+                      <>
+                        <button onClick={() => approve(c.id)} disabled={busyId === c.id} data-testid={`coord-approve-${c.id}`}
+                          className="text-xs bg-[#5A8896] text-white hover:bg-[#46707C] px-4 py-1.5 rounded-full disabled:opacity-60">Approve</button>
+                        <button onClick={() => reject(c.id)} disabled={busyId === c.id} data-testid={`coord-reject-${c.id}`}
+                          className="text-xs border border-[#EBE7E0] text-[#5C757B] hover:text-[#C77373] hover:border-[#C77373] px-4 py-1.5 rounded-full disabled:opacity-60">Reject</button>
+                      </>
+                    )}
+                    <button onClick={() => setOpenId(isOpen ? null : c.id)} data-testid={`coord-toggle-${c.id}`}
+                      className="text-xs border border-[#EBE7E0] text-[#5C757B] hover:text-[#2C3E42] px-4 py-1.5 rounded-full">
+                      {isOpen ? "Hide" : "View"}
+                    </button>
+                    <button onClick={() => remove(c.id)} disabled={busyId === c.id} data-testid={`coord-delete-${c.id}`}
+                      className="text-xs flex items-center gap-1 text-[#C77373] hover:text-[#A05555] px-3 py-1.5 disabled:opacity-60"><Trash2 size={12} /></button>
+                  </div>
+                </div>
+
+                {isOpen && (
+                  <div className="mt-5 pt-5 border-t border-[#EBE7E0] grid md:grid-cols-2 gap-5 text-sm">
+                    <Detail label="Occupation">{c.occupation || "—"}</Detail>
+                    <Detail label="Age">{c.age ?? "—"}</Detail>
+                    <Detail label="Profile link">
+                      {c.profile_url ? <a href={c.profile_url} target="_blank" rel="noreferrer" className="text-[#5A8896] hover:underline break-all">{c.profile_url}</a> : "—"}
+                    </Detail>
+                    <Detail label="Heard about us">{c.referral_source || "—"}</Detail>
+                    <Detail label="Why they want to join" full>
+                      <p className="text-[#2C3E42] leading-relaxed whitespace-pre-wrap">{c.why_join}</p>
+                    </Detail>
+                    <Detail label="Impact they want to make" full>
+                      <p className="text-[#2C3E42] leading-relaxed whitespace-pre-wrap">{c.impact_goal}</p>
+                    </Detail>
+                    {c.past_experience && (
+                      <Detail label="Past experience" full>
+                        <p className="text-[#2C3E42] leading-relaxed whitespace-pre-wrap">{c.past_experience}</p>
+                      </Detail>
+                    )}
+                    {c.decided_at && (
+                      <Detail label="Decided at">{new Date(c.decided_at).toLocaleString()}</Detail>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Detail({ label, children, full }) {
+  return (
+    <div className={full ? "md:col-span-2" : ""}>
+      <div className="text-[10px] tracking-[0.22em] uppercase text-[#5C757B] mb-1">{label}</div>
+      <div className="text-sm text-[#2C3E42]">{children}</div>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [tab, setTab] = useState("projects");
@@ -607,6 +787,7 @@ export default function AdminDashboard() {
   const tabs = [
     { key: "projects", label: "Projects", icon: LayoutGrid },
     { key: "team", label: "Team", icon: UserCircle2 },
+    { key: "coordinators", label: "Coordinators", icon: UserPlus },
     { key: "donations", label: "Donations", icon: Wallet },
     { key: "messages", label: "Messages", icon: MessageSquare },
   ];
@@ -655,6 +836,7 @@ export default function AdminDashboard() {
 
         {tab === "projects" && <ProjectsTab />}
         {tab === "team" && <TeamTab />}
+        {tab === "coordinators" && <CoordinatorsTab />}
         {tab === "donations" && <DonationsTab />}
         {tab === "messages" && <MessagesTab />}
       </div>

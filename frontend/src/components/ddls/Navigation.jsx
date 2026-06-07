@@ -7,6 +7,7 @@ const links = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
   { label: "Projects", to: "/projects" },
+  { label: "Join Us", to: "/join" },
   { label: "Contact", to: "/contact" },
 ];
 
@@ -52,7 +53,7 @@ export default function Navigation({ transparent = false }) {
               <Link
                 key={l.to}
                 to={l.to}
-                data-testid={`nav-link-${l.label.toLowerCase()}`}
+                data-testid={`nav-link-${l.label.toLowerCase().replace(/\s+/g, "-")}`}
                 className={`text-sm transition-colors ${
                   active ? "text-[#2C3E42]" : "text-[#5C757B] hover:text-[#2C3E42]"
                 }`}
@@ -89,7 +90,7 @@ export default function Navigation({ transparent = false }) {
                 key={l.to}
                 to={l.to}
                 onClick={() => setOpen(false)}
-                data-testid={`nav-mobile-link-${l.label.toLowerCase()}`}
+                data-testid={`nav-mobile-link-${l.label.toLowerCase().replace(/\s+/g, "-")}`}
                 className="text-base text-[#2C3E42] py-2 border-b border-[#EBE7E0]/60"
               >
                 {l.label}

@@ -223,6 +223,168 @@ async def send_thank_you_email(donation: dict) -> None:
         logger.error(f"Failed to send thank-you email: {e}")
 
 
+def _build_coordinator_ack_email_html(name: str, city: str, state: str, role_preference: str) -> str:
+    first_name = (name or "friend").strip().split(" ")[0] or "friend"
+    scope = f"{city.title()} ({state.title()})" if role_preference == "city" else f"{state.title()} state"
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<body style="margin:0;padding:0;background:#FDFBF7;font-family:'Helvetica Neue',Arial,sans-serif;color:#2C3E42;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FDFBF7;padding:40px 16px;">
+  <tr><td align="center">
+    <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#FFFFFF;border:1px solid #EBE7E0;border-radius:20px;overflow:hidden;">
+      <tr><td align="center" style="padding:36px 32px 12px 32px;">
+        <div style="font-size:12px;letter-spacing:6px;color:#D99F80;font-weight:600;">&middot; DOSTI DIL SE &middot;</div>
+      </td></tr>
+      <tr><td align="center" style="padding:8px 32px 0 32px;">
+        <h1 style="margin:0;font-family:Georgia,serif;font-size:32px;line-height:1.2;color:#2C3E42;font-weight:400;">
+          We&rsquo;ve received your application, <span style="font-style:italic;color:#5A8896;">{first_name}</span>.
+        </h1>
+      </td></tr>
+      <tr><td align="center" style="padding:16px 40px 8px 40px;">
+        <p style="margin:0;font-size:16px;line-height:1.7;color:#5C757B;">
+          Thank you for stepping forward to lead our work in <strong style="color:#2C3E42;">{scope}</strong>. Becoming a coordinator isn&rsquo;t a title &mdash; it&rsquo;s a quiet promise to show up for children who need someone in their corner.
+        </p>
+      </td></tr>
+      <tr><td align="center" style="padding:12px 40px 4px 40px;">
+        <p style="margin:0;font-family:Georgia,serif;font-style:italic;font-size:20px;line-height:1.5;color:#2C3E42;">
+          &ldquo;A small group of thoughtful people could change the world. Indeed, it&rsquo;s the only thing that ever has.&rdquo;
+        </p>
+      </td></tr>
+      <tr><td align="center" style="padding:18px 40px 4px 40px;">
+        <p style="margin:0;font-size:15px;line-height:1.7;color:#5C757B;">
+          Our team will read every word of your application with care. We&rsquo;ll be in touch within <strong style="color:#2C3E42;">5&ndash;7 days</strong> with next steps &mdash; whether that&rsquo;s a quick call or a warm welcome to the family.
+        </p>
+      </td></tr>
+      <tr><td align="center" style="padding:28px 32px 36px 32px;">
+        <p style="margin:0;font-size:13px;line-height:1.7;color:#8A9498;">
+          With gratitude,<br/>
+          <span style="color:#2C3E42;font-weight:600;">The Dosti Dil Se team</span><br/>
+          <a href="mailto:{REPLY_TO_EMAIL}" style="color:#5A8896;text-decoration:none;">{REPLY_TO_EMAIL}</a>
+        </p>
+      </td></tr>
+      <tr><td style="background:#F2EFE9;padding:18px 32px;" align="center">
+        <div style="font-size:11px;color:#8A9498;line-height:1.6;">You are receiving this because you applied to coordinate at {PUBLIC_SITE_URL}.</div>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>"""
+
+
+def _build_coordinator_welcome_email_html(name: str, city: str, state: str, role_preference: str) -> str:
+    first_name = (name or "friend").strip().split(" ")[0] or "friend"
+    scope = f"{city.title()}" if role_preference == "city" else f"{state.title()} state"
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<body style="margin:0;padding:0;background:#FDFBF7;font-family:'Helvetica Neue',Arial,sans-serif;color:#2C3E42;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FDFBF7;padding:40px 16px;">
+  <tr><td align="center">
+    <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#FFFFFF;border:1px solid #EBE7E0;border-radius:20px;overflow:hidden;">
+      <tr><td align="center" style="padding:36px 32px 12px 32px;">
+        <div style="font-size:12px;letter-spacing:6px;color:#D99F80;font-weight:600;">&middot; DOSTI DIL SE &middot;</div>
+      </td></tr>
+      <tr><td align="center" style="padding:8px 32px 0 32px;">
+        <h1 style="margin:0;font-family:Georgia,serif;font-size:34px;line-height:1.2;color:#2C3E42;font-weight:400;">
+          Welcome to the family, <span style="font-style:italic;color:#5A8896;">{first_name}</span>.
+        </h1>
+      </td></tr>
+      <tr><td align="center" style="padding:8px 32px 0 32px;">
+        <div style="display:inline-block;background:#FDF3EC;color:#C7794F;border-radius:999px;padding:10px 20px;font-family:Georgia,serif;font-style:italic;font-size:15px;margin-top:14px;">
+          &#127775; {scope} Coordinator &middot; Dosti Dil Se
+        </div>
+      </td></tr>
+      <tr><td align="center" style="padding:20px 40px 8px 40px;">
+        <p style="margin:0;font-size:16px;line-height:1.7;color:#5C757B;">
+          Your application moved us. We&rsquo;re honoured to have you lead our work in <strong style="color:#2C3E42;">{scope}</strong>. From today, you&rsquo;re no longer applying &mdash; you&rsquo;re one of us.
+        </p>
+      </td></tr>
+      <tr><td align="center" style="padding:12px 40px 4px 40px;">
+        <p style="margin:0;font-family:Georgia,serif;font-style:italic;font-size:20px;line-height:1.5;color:#2C3E42;">
+          &ldquo;The best way to find yourself is to lose yourself in the service of others.&rdquo;
+        </p>
+      </td></tr>
+      <tr><td align="center" style="padding:18px 40px 4px 40px;">
+        <p style="margin:0;font-size:15px;line-height:1.7;color:#5C757B;">
+          A member of our core team will reach out personally in the next <strong style="color:#2C3E42;">48 hours</strong> with your onboarding kit, a small welcome call invite, and your first set of stories from the ground.
+        </p>
+      </td></tr>
+      <tr><td align="center" style="padding:24px 32px 12px 32px;">
+        <a href="{PUBLIC_SITE_URL}" style="display:inline-block;background:#5A8896;color:#FFFFFF;text-decoration:none;padding:14px 28px;border-radius:999px;font-size:14px;font-weight:600;letter-spacing:0.3px;">Visit Dosti Dil Se &rarr;</a>
+      </td></tr>
+      <tr><td align="center" style="padding:0 32px 36px 32px;">
+        <p style="margin:0;font-size:13px;line-height:1.7;color:#8A9498;">
+          With love,<br/>
+          <span style="color:#2C3E42;font-weight:600;">The Dosti Dil Se team</span><br/>
+          <a href="mailto:{REPLY_TO_EMAIL}" style="color:#5A8896;text-decoration:none;">{REPLY_TO_EMAIL}</a>
+        </p>
+      </td></tr>
+      <tr><td style="background:#F2EFE9;padding:18px 32px;" align="center">
+        <div style="font-size:11px;color:#8A9498;line-height:1.6;">You are receiving this because your coordinator application at {PUBLIC_SITE_URL} was approved.</div>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>"""
+
+
+async def _send_coordinator_email(to_email: str, subject: str, html: str, log_label: str) -> None:
+    if not RESEND_API_KEY:
+        logger.info(f"Resend not configured — skipping {log_label} email")
+        return
+    try:
+        params = {
+            "from": f"{SENDER_NAME} <{SENDER_EMAIL}>",
+            "to": [to_email],
+            "subject": subject,
+            "html": html,
+            "reply_to": REPLY_TO_EMAIL,
+        }
+        result = await asyncio.to_thread(resend.Emails.send, params)
+        logger.info(f"{log_label} email sent to {to_email}: {result.get('id') if isinstance(result, dict) else result}")
+    except Exception as e:
+        logger.error(f"Failed to send {log_label} email: {e}")
+
+
+async def send_coordinator_ack_email(app_doc: dict) -> None:
+    to_email = app_doc.get("email")
+    if not to_email:
+        return
+    first_name = (app_doc.get("name") or "friend").strip().split(" ")[0] or "friend"
+    html = _build_coordinator_ack_email_html(
+        name=app_doc.get("name", "friend"),
+        city=app_doc.get("city", ""),
+        state=app_doc.get("state", ""),
+        role_preference=app_doc.get("role_preference", "city"),
+    )
+    await _send_coordinator_email(
+        to_email=to_email,
+        subject=f"We received your application, {first_name} \u2014 Dosti Dil Se",
+        html=html,
+        log_label="coordinator-ack",
+    )
+
+
+async def send_coordinator_welcome_email(app_doc: dict) -> None:
+    to_email = app_doc.get("email")
+    if not to_email:
+        return
+    first_name = (app_doc.get("name") or "friend").strip().split(" ")[0] or "friend"
+    html = _build_coordinator_welcome_email_html(
+        name=app_doc.get("name", "friend"),
+        city=app_doc.get("city", ""),
+        state=app_doc.get("state", ""),
+        role_preference=app_doc.get("role_preference", "city"),
+    )
+    await _send_coordinator_email(
+        to_email=to_email,
+        subject=f"Welcome to the family, {first_name} \U0001F90D",
+        html=html,
+        log_label="coordinator-welcome",
+    )
+
+
 async def get_current_admin(request: Request) -> dict:
     auth = request.headers.get("Authorization", "")
     if not auth.startswith("Bearer "):
@@ -365,6 +527,47 @@ class Project(BaseModel):
     children_helped: Optional[int] = None
     image_base64: Optional[str] = None
     created_at: str
+
+
+class CoordinatorApplicationCreate(BaseModel):
+    name: str = Field(..., min_length=2, max_length=120)
+    email: EmailStr
+    phone: str = Field(..., min_length=6, max_length=20)
+    city: str = Field(..., min_length=1, max_length=80)
+    state: str = Field(..., min_length=1, max_length=80)
+    role_preference: str = Field(..., pattern="^(city|state)$")
+    occupation: Optional[str] = Field(None, max_length=120)
+    age: Optional[int] = Field(None, ge=16, le=100)
+    profile_url: Optional[str] = Field(None, max_length=300, description="LinkedIn / portfolio link")
+    why_join: str = Field(..., min_length=20, max_length=2000)
+    impact_goal: str = Field(..., min_length=20, max_length=2000)
+    monthly_hours: int = Field(..., ge=1, le=200, description="Hours per month you can contribute")
+    past_experience: Optional[str] = Field(None, max_length=2000)
+    referral_source: Optional[str] = Field(None, max_length=200)
+    photo_base64: Optional[str] = None
+
+
+class CoordinatorApplication(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str
+    name: str
+    email: str
+    phone: str
+    city: str
+    state: str
+    role_preference: str
+    occupation: Optional[str] = None
+    age: Optional[int] = None
+    profile_url: Optional[str] = None
+    why_join: str
+    impact_goal: str
+    monthly_hours: int
+    past_experience: Optional[str] = None
+    referral_source: Optional[str] = None
+    photo_base64: Optional[str] = None
+    status: str  # pending | approved | rejected
+    created_at: str
+    decided_at: Optional[str] = None
 
 
 class AdminDonation(BaseModel):
@@ -735,6 +938,99 @@ async def delete_team_member(member_id: str, _: dict = Depends(get_current_admin
     result = await db.team_members.delete_one({"id": member_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Team member not found")
+    return {"success": True}
+
+
+# ----- Coordinator Applications -----
+@api_router.post("/coordinators/apply", response_model=CoordinatorApplication)
+async def submit_coordinator_application(payload: CoordinatorApplicationCreate):
+    # Prevent duplicate pending applications from same email
+    existing = await db.coordinator_applications.find_one({
+        "email": payload.email.lower(),
+        "status": "pending",
+    })
+    if existing:
+        raise HTTPException(
+            status_code=409,
+            detail="You already have a pending application. We'll be in touch soon."
+        )
+
+    doc = {
+        "id": str(uuid.uuid4()),
+        "name": payload.name.strip(),
+        "email": payload.email.lower(),
+        "phone": payload.phone.strip(),
+        "city": payload.city.strip(),
+        "state": payload.state.strip(),
+        "role_preference": payload.role_preference,
+        "occupation": (payload.occupation or "").strip() or None,
+        "age": payload.age,
+        "profile_url": (payload.profile_url or "").strip() or None,
+        "why_join": payload.why_join.strip(),
+        "impact_goal": payload.impact_goal.strip(),
+        "monthly_hours": payload.monthly_hours,
+        "past_experience": (payload.past_experience or "").strip() or None,
+        "referral_source": (payload.referral_source or "").strip() or None,
+        "photo_base64": payload.photo_base64,
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "decided_at": None,
+    }
+    await db.coordinator_applications.insert_one(doc)
+    # Fire-and-forget acknowledgement email
+    asyncio.create_task(send_coordinator_ack_email(doc))
+    return CoordinatorApplication(**doc)
+
+
+@api_router.get("/admin/coordinators", response_model=List[CoordinatorApplication])
+async def list_coordinator_applications(
+    status: Optional[str] = None,
+    _: dict = Depends(get_current_admin),
+):
+    query = {}
+    if status in ("pending", "approved", "rejected"):
+        query["status"] = status
+    cursor = db.coordinator_applications.find(query, {"_id": 0}).sort("created_at", -1).limit(500)
+    items = await cursor.to_list(500)
+    return [CoordinatorApplication(**i) for i in items]
+
+
+@api_router.post("/admin/coordinators/{app_id}/approve", response_model=CoordinatorApplication)
+async def approve_coordinator_application(app_id: str, _: dict = Depends(get_current_admin)):
+    app_doc = await db.coordinator_applications.find_one({"id": app_id}, {"_id": 0})
+    if not app_doc:
+        raise HTTPException(status_code=404, detail="Application not found")
+    if app_doc.get("status") == "approved":
+        return CoordinatorApplication(**app_doc)
+
+    await db.coordinator_applications.update_one(
+        {"id": app_id},
+        {"$set": {"status": "approved", "decided_at": datetime.now(timezone.utc).isoformat()}},
+    )
+    updated = await db.coordinator_applications.find_one({"id": app_id}, {"_id": 0})
+    # Fire-and-forget welcome email
+    asyncio.create_task(send_coordinator_welcome_email(updated))
+    return CoordinatorApplication(**updated)
+
+
+@api_router.post("/admin/coordinators/{app_id}/reject", response_model=CoordinatorApplication)
+async def reject_coordinator_application(app_id: str, _: dict = Depends(get_current_admin)):
+    app_doc = await db.coordinator_applications.find_one({"id": app_id}, {"_id": 0})
+    if not app_doc:
+        raise HTTPException(status_code=404, detail="Application not found")
+    await db.coordinator_applications.update_one(
+        {"id": app_id},
+        {"$set": {"status": "rejected", "decided_at": datetime.now(timezone.utc).isoformat()}},
+    )
+    updated = await db.coordinator_applications.find_one({"id": app_id}, {"_id": 0})
+    return CoordinatorApplication(**updated)
+
+
+@api_router.delete("/admin/coordinators/{app_id}")
+async def delete_coordinator_application(app_id: str, _: dict = Depends(get_current_admin)):
+    result = await db.coordinator_applications.delete_one({"id": app_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Application not found")
     return {"success": True}
 
 
