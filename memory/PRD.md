@@ -1,0 +1,35 @@
+# Dosti Dil Se — PRD
+
+## Original Problem Statement
+Clone https://github.com/etiadvertisements-sudo/dostidilse into /app and make it running.
+
+## Architecture
+- Backend: FastAPI (Python) at `/app/backend/server.py`, port 8001 (supervisor-managed)
+- Frontend: React 19 + CRACO + Tailwind at `/app/frontend`, port 3000
+- DB: MongoDB (local)
+- Integrations present in code (currently disabled — keys empty in .env):
+  - Razorpay (donations)
+  - Resend (thank-you emails)
+  - PyOTP (admin 2FA)
+  - JWT auth for admin
+- Routes: Home, About, Projects, Contact, Admin Login, Admin Dashboard
+
+## Setup Done (Jan 2026)
+- Cloned repo into `/app` (preserved `.git`, `.emergent`)
+- Created `/app/backend/.env` with MONGO_URL, DB_NAME, JWT_SECRET, ADMIN credentials (Razorpay/Resend keys left empty)
+- Created `/app/frontend/.env` with REACT_APP_BACKEND_URL pointing to preview URL
+- Installed Python deps via pip (per repo `requirements.txt`)
+- Installed JS deps via `yarn install`
+- Restarted backend + frontend via supervisor — both RUNNING
+- Verified: `GET /api/` returns greeting; `GET /api/donations/stats` returns zeroed stats; homepage renders correctly
+
+## Default Credentials
+- Admin email: `admin@dostidilse.org`
+- Admin password: `Dosti@2026`
+- (TOTP will be generated on first login — scan QR once with authenticator app)
+
+## Backlog / Next Actions
+- P1: Add real Razorpay test keys to backend/.env to enable real donation flow (currently the order endpoint will create a mock order id only when keys absent)
+- P1: Add real Resend API key to enable thank-you email delivery
+- P2: Add team members via Admin Dashboard so Core Team section becomes visible
+- P2: Seed projects so the Projects page has content

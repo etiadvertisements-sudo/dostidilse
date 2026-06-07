@@ -1,0 +1,37 @@
+{
+  "summary": "Iteration 4 backend testing for Dosti Dil Se. Verified TOTP 2FA flow end-to-end (login step='setup'/'code', provisioning_uri secret matches DB, verify-totp invalid/valid codes, access-JWT rejected as pre_auth_token, protected endpoints via Bearer), reset-totp auth-gated + rotates secret + resets totp_verified + forces next login back to setup. Donations: gift_to/gift_occasion persist when amount>=500 and are nulled when <500 (verified via /admin/donations). Team endpoint returns 4 seeded members in order. _id never leaks. 32/35 tests pass. 3 FAILURES are all caused by one bug: WallDonor Pydantic model omits gift_to + gift_occasion so /api/donations/wall does not return those fields even though they are projected from Mongo.",
+  "backend_issues": {
+    "critical": [
+      {"endpoint": "GET /api/donations/wall", "issue": "Response omits gift_to and gift_occasion. WallDonor Pydantic model (server.py lines ~146-152) does not declare these fields, so Pydantic strips them from the response despite the find() projection including them. Spec for iter 4 explicitly requires these on the wall.", "priority": "HIGH"}
+    ],
+    "minor": []
+  },
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Add gift_to: Optional[str] = None and gift_occasion: Optional[str] = None to the WallDonor model in /app/backend/server.py (around line 146) so /api/donations/wall exposes them. After that fix, re-run pytest to see all 35/35 pass."
+  ],
+  "critical_code_review_comments": [
+    "TOTP security: verify-totp uses valid_window=1 (accepts prev+current+next 30s code). Standard and fine for typical clock skew.",
+    "pre_auth vs access JWT: both are signed with JWT_SECRET but differentiated by the `type` claim; decode_pre_auth_token correctly rejects type='access'. Verified.",
+    "reset-totp: rotates secret via pyotp.random_base32() and sets totp_verified=False; subsequent login returns step='setup' with new provisioning_uri embedding the new secret. Verified.",
+    "Race/time-skew: test suite retries verify-totp once after sleep(1) to avoid 30-second boundary flake. Server-side could also widen valid_window but 1 is OK.",
+    "Latent bug (carry-over from iter 1/2): `logger` reference inside create_donation_order Razorpay exception branch is below logger init line order - will NameError only if razorpay_client is configured AND throws. Still unfixed but dormant in placeholder mode.",
+    "Deprecation (carry-over): @app.on_event('startup'/'shutdown') is deprecated; migrate to lifespan context manager.",
+    "Unbounded base64: photo_base64/image_base64 still have no size cap server-side.",
+    "WallDonor model is missing the two new iter-4 fields - root cause of the 3 failing tests. One-line fix."
+  ],
+  "updated_files": [
+    "/app/backend/tests/backend_test.py (rewritten for iter 4: 2FA TOTP flow, reset-totp stateful test, gift fields, team seed, retained coverage for donations/contact/projects/stats)"
+  ],
+  "success_rate": {"backend": "91% (32/35)", "frontend": "not_tested"},
+  "test_credentials": "admin@dostidilse.org / Dosti@2026. TOTP secret read live from db.admins.totp_secret and current code computed via pyotp.TOTP(secret).now(). After reset-totp test runs, admin is re-set-up within that test so subsequent tests (and next testing agents) find totp_verified=True.",
+  "seed_data_creation": "TEST_-prefixed donations inserted (some marked paid) with gift_to='Ananya'/gift_occasion='Birthday' for amount>=500 and with gift fields submitted but nulled for amount<500. Test entries: db.donations.delete_many({'name': {'$regex': '^TEST_'}}); db.contact_messages.delete_many({'name': {'$regex': '^TEST_'}}).",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "After main agent adds gift_to + gift_occasion to the WallDonor model, re-run: `set -a && source /app/frontend/.env && source /app/backend/.env && set +a && python -m pytest /app/backend/tests/backend_test.py -v`. Admin TOTP state will remain verified=True between runs. If admin TOTP gets reset externally, the login helper handles step='setup' the same way. Razorpay still in placeholder mode so signature check is skipped.",
+  "rca of the issue": "Root cause: server.py defines `class WallDonor(BaseModel)` without gift_to / gift_occasion fields. In `get_donor_wall` the Mongo projection includes them but Pydantic discards unmodeled fields during `WallDonor(**d)` instantiation. Reproduction: POST /api/donations/create-order with amount=500, gift_to='Ananya', gift_occasion='Birthday' -> verify -> GET /api/donations/wall -> donor entry lacks gift_to/gift_occasion keys. Fix: add `gift_to: Optional[str] = None` and `gift_occasion: Optional[str] = None` to WallDonor. No DB or logic change needed."
+}

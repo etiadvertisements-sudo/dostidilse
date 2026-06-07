@@ -1,0 +1,105 @@
+{
+  "theme": "light",
+  "archetype": "1_organic_earthy",
+  "brand": {
+    "name": "Dosti Dil Se",
+    "description": "An NGO focused on helping students with educational essentials, nature projects, and assisting anyone in need.",
+    "tone": "Emotional, pure, transparent, minimal, trust-inspiring."
+  },
+  "colors": {
+    "background": "#FDFBF7",
+    "surface": "#FFFFFF",
+    "primary": "#5A8896",
+    "primary_hover": "#46707C",
+    "secondary": "#D99F80",
+    "text_primary": "#2C3E42",
+    "text_secondary": "#5C757B",
+    "border": "#EBE7E0",
+    "accent_subtle": "#F2EFE9"
+  },
+  "typography": {
+    "heading_font": "Playfair Display",
+    "body_font": "Manrope",
+    "scales": {
+      "h1": "text-5xl sm:text-6xl tracking-tight leading-tight",
+      "h2": "text-3xl sm:text-4xl tracking-tight leading-snug",
+      "h3": "text-2xl sm:text-3xl leading-snug",
+      "h4": "text-xl font-medium",
+      "body": "text-base sm:text-lg leading-relaxed text-text_secondary",
+      "small": "text-sm tracking-wide uppercase"
+    }
+  },
+  "spacing_and_layout": {
+    "container_padding": "px-6 md:px-12 lg:px-24",
+    "section_spacing": "py-20 md:py-32",
+    "grid_gap": "gap-8 md:gap-16",
+    "border_radius": "rounded-2xl"
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-[#5A8896] text-white hover:bg-[#46707C] px-8 py-4 rounded-full transition-all duration-300 shadow-sm hover:shadow-md font-medium text-lg",
+      "secondary": "bg-transparent border border-[#5A8896] text-[#5A8896] hover:bg-[#5A8896] hover:text-white px-8 py-4 rounded-full transition-all duration-300 font-medium text-lg",
+      "ghost": "bg-transparent text-[#5C757B] hover:text-[#2C3E42] transition-colors duration-300"
+    },
+    "cards": {
+      "base": "bg-white rounded-2xl p-8 shadow-sm border border-[#EBE7E0] hover:shadow-md transition-shadow duration-300"
+    },
+    "navigation": {
+      "style": "sticky top-0 z-50 bg-[#FDFBF7]/90 backdrop-blur-md border-b border-[#EBE7E0]/50"
+    }
+  },
+  "media": {
+    "logo": "https://customer-assets.emergentagent.com/job_8c74544b-a9bf-4b5e-af04-80b3b23e40d7/artifacts/tm5s7h48_422509585_775043394532209_6754044233564037772_n.jpg",
+    "images": {
+      "hero_background": "https://images.unsplash.com/photo-1758200056385-782e7a16ed1f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzZ8MHwxfHNlYXJjaHwyfHxtaW5pbWFsJTIwc3Vuc2hpbmUlMjBuYXR1cmUlMjBoYW5kc3xlbnwwfHx8fDE3Nzc3MTAzNzd8MA&ixlib=rb-4.1.0&q=85",
+      "kids_studying": "https://images.unsplash.com/photo-1692269725827-699e04a11cdf?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODh8MHwxfHNlYXJjaHwzfHxpbmRpYW4lMjBydXJhbCUyMHNjaG9vbCUyMGNoaWxkcmVuJTIwc21pbGluZyUyMHN0dWR5aW5nfGVufDB8fHx8MTc3NzcxMDM2MXww&ixlib=rb-4.1.0&q=85",
+      "kids_looking": "https://images.unsplash.com/photo-1692269726066-5be200e3a81d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODh8MHwxfHNlYXJjaHwyfHxpbmRpYW4lMjBydXJhbCUyMHNjaG9vbCUyMGNoaWxkcmVuJTIwc21pbGluZyUyMHN0dWR5aW5nfGVufDB8fHx8MTc3NzcxMDM2MXww&ixlib=rb-4.1.0&q=85",
+      "nature_planting": "https://images.unsplash.com/photo-1777150895644-2ca253ee1c93?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA0MTJ8MHwxfHNlYXJjaHwxfHxwbGFudGluZyUyMHRyZWVzJTIwbmF0dXJlJTIwY2hpbGRyZW4lMjBoYW5kc3xlbnwwfHx8fDE3Nzc3MTAzNjF8MA&ixlib=rb-4.1.0&q=85",
+      "founder_placeholder": "https://images.unsplash.com/photo-1692269725980-495f94b9d7a4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1ODh8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBydXJhbCUyMHNjaG9vbCUyMGNoaWxkcmVuJTIwc21pbGluZyUyMHN0dWR5aW5nfGVufDB8fHx8MTc3NzcxMDM2MXww&ixlib=rb-4.1.0&q=85"
+    }
+  },
+  "sections": [
+    {
+      "name": "Hero",
+      "layout": "Asymmetrical split or overlapping bento. Generous white space. Large emotive typography.",
+      "components": "Text block with 'Spreading Love & Hope', Logo prominently displayed but elegantly integrated, Primary Donate CTA, background subtle natural texture or clean solid."
+    },
+    {
+      "name": "Founder Story",
+      "layout": "Text-heavy but highly readable. Wide margins (e.g., max-w-3xl).",
+      "components": "Tribute to Krishna Mahajan and his grandparents. Use Playfair Display italic for a pull quote."
+    },
+    {
+      "name": "Our Mission & What We Do",
+      "layout": "Bento Grid (Mode A).",
+      "components": "Cards mapping to: Education (Stationary/Bags), Nature Projects, Helping Anyone in Need. Use imagery."
+    },
+    {
+      "name": "Impact Gallery & Stats",
+      "layout": "Grid masonry or simple staggered grid.",
+      "components": "Large numbers for stats (Students Helped, Donations, Projects). Image gallery showing kids and planting trees."
+    },
+    {
+      "name": "Donate Section",
+      "layout": "Clean card layout centered on the screen.",
+      "components": "Tiers: ₹500, ₹1000, ₹2500, Custom Input. Razorpay button styling."
+    },
+    {
+      "name": "Contact & Footer",
+      "layout": "Minimalist wide footer.",
+      "components": "Contact form (Name, Email, Message), Email: connect@dostidilse.org, Footer links."
+    }
+  ],
+  "accessibility_and_motion": {
+    "motion": "Subtle fade-ups for text blocks on scroll (Framer Motion). Hover states must clearly change color and lift slightly. Images use slow scale-up on hover if inside cards.",
+    "accessibility": "Ensure Playfair Display and Manrope are legible with sufficient contrast. Use semantic HTML. All interactive elements must have data-testid attributes."
+  },
+  "instructions_to_main_agent": [
+    "Use pure HTML and Tailwind for marketing layouts rather than Shadcn cards, allowing for overlapping elements and soft bento grids.",
+    "Shadcn UI can be used for the Contact Form and Donation selection logic, heavily customized to remove the 'SaaS' look.",
+    "Inject the provided Logo URL wherever the brand logo is needed.",
+    "Use Phosphor Icons (Thin or Light weight) or Lucide icons for a delicate, minimalist touch.",
+    "Ensure 'data-testid' is added to all buttons, form inputs, and major links.",
+    "Build the Razorpay donation flow logic and contact form handler."
+  ]
+}
