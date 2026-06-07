@@ -7,8 +7,8 @@ export const API = `${BACKEND_URL}/api`;
 
 // Indian-context Unsplash photos — stable photo IDs (no expiring ixid tokens).
 export const IMAGES = {
-  // Indian girl with bright eyes (hero)
-  hero_kids: "https://images.unsplash.com/photo-1604881991720-f91add269bed?auto=format&fit=crop&w=1200&q=80",
+  // Indian school children — bright, hopeful (hero)
+  hero_kids: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1200&q=80",
   // Indian children in a doorway
   kids_looking: "https://images.unsplash.com/photo-1610208693777-da41b6f1f76a?auto=format&fit=crop&w=1200&q=80",
   // Indian children smiling together
