@@ -3,15 +3,9 @@ import axios from "axios";
 import { toast } from "sonner";
 import { API } from "@/lib/constants";
 import { fileToBase64 } from "@/lib/api";
+import { useT } from "@/lib/i18n";
 import { Heart, Loader2, Camera, X, Gift } from "lucide-react";
 import ShareCardModal from "@/components/ddls/ShareCardModal";
-
-const tiers = [
-  { amount: 10, label: "A small hello", note: "Every rupee finds its way" },
-  { amount: 500, label: "A gentle hand", note: "Helps one child walk a little further" },
-  { amount: 1000, label: "A brighter start", note: "A fuller beginning for one child" },
-  { amount: 2500, label: "A month of hope", note: "Supports five children" },
-];
 
 function loadRazorpayScript() {
   return new Promise((resolve) => {
@@ -25,6 +19,13 @@ function loadRazorpayScript() {
 }
 
 export default function Donate() {
+  const { t } = useT();
+  const tiers = [
+    { amount: 10, label: t("donate.t1.label"), note: t("donate.t1.note") },
+    { amount: 500, label: t("donate.t2.label"), note: t("donate.t2.note") },
+    { amount: 1000, label: t("donate.t3.label"), note: t("donate.t3.note") },
+    { amount: 2500, label: t("donate.t4.label"), note: t("donate.t4.note") },
+  ];
   const [selectedAmount, setSelectedAmount] = useState(500);
   const [customAmount, setCustomAmount] = useState("");
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
@@ -180,19 +181,18 @@ export default function Donate() {
       <div className="ddls-container">
         <div className="max-w-3xl mx-auto text-center">
           <div className="text-xs tracking-[0.28em] uppercase text-[#D99F80] font-medium">
-            Contribute
+            {t("donate.kicker")}
           </div>
           <h2
             data-testid="donate-title"
             className="mt-4 font-serif text-4xl sm:text-5xl tracking-tight text-[#2C3E42] leading-tight"
           >
-            Your kindness,
+            {t("donate.title_1")}
             <br />
-            <span className="italic text-[#5A8896]">their courage.</span>
+            <span className="italic text-[#5A8896]">{t("donate.title_em")}</span>
           </h2>
           <p className="mt-6 text-lg text-[#5C757B] leading-relaxed">
-            Every contribution — ten rupees or ten thousand — carries the same weight of
-            kindness. Add your photo, and see your heart join our Wall of Hearts.
+            {t("donate.lead")}
           </p>
         </div>
 
@@ -235,7 +235,7 @@ export default function Donate() {
           {/* Custom amount */}
           <div className="mt-5">
             <label className="text-xs tracking-[0.22em] uppercase text-[#5C757B]">
-              Or enter a custom amount
+              {t("donate.custom_label")}
             </label>
             <div className="mt-2 flex items-center border border-[#EBE7E0] rounded-full overflow-hidden focus-within:border-[#5A8896] transition">
               <span className="pl-5 text-[#5C757B] font-serif text-lg">₹</span>
@@ -245,7 +245,7 @@ export default function Donate() {
                 value={customAmount}
                 data-testid="custom-amount-input"
                 onChange={(e) => setCustomAmount(e.target.value)}
-                placeholder="e.g. 750"
+                placeholder={t("donate.custom_placeholder")}
                 className="flex-1 px-3 py-3.5 bg-transparent outline-none text-[#2C3E42] placeholder:text-[#5C757B]/60"
               />
             </div>
@@ -256,7 +256,7 @@ export default function Donate() {
           {/* Photo upload */}
           <div>
             <label className="text-xs tracking-[0.22em] uppercase text-[#5C757B]">
-              Your photo <span className="text-[#D99F80] normal-case tracking-normal">· joins our Wall of Hearts</span>
+              {t("donate.photo_label")} <span className="text-[#D99F80] normal-case tracking-normal">{t("donate.photo_sub")}</span>
             </label>
             <div className="mt-3 flex items-center gap-4">
               {photo ? (
@@ -288,10 +288,10 @@ export default function Donate() {
                   data-testid="upload-photo-btn"
                   className="bg-transparent border border-[#5A8896]/60 text-[#5A8896] hover:bg-[#5A8896] hover:text-white px-5 py-2.5 rounded-full transition-all duration-300 text-sm font-medium"
                 >
-                  {photo ? "Change photo" : "Upload photo"}
+                  {photo ? t("donate.change_photo") : t("donate.upload_photo")}
                 </button>
                 <p className="text-xs text-[#5C757B] mt-2">
-                  JPG/PNG · up to 1.2 MB · a happy face works best
+                  {t("donate.photo_help")}
                 </p>
                 <input
                   ref={fileRef}
@@ -321,11 +321,10 @@ export default function Donate() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 text-[#2C3E42] font-medium">
                     <Gift size={16} className="text-[#D99F80]" />
-                    Name a child&rsquo;s dream
+                    {t("donate.gift_title")}
                   </div>
                   <div className="text-xs text-[#5C757B] mt-1 leading-relaxed">
-                    Dedicate this contribution to someone — a birthday, an anniversary, a memory.
-                    We&rsquo;ll bake their name into your share card.
+                    {t("donate.gift_desc")}
                   </div>
                 </div>
               </label>
@@ -333,30 +332,30 @@ export default function Donate() {
               {gift.enabled && (
                 <div className="mt-4 grid sm:grid-cols-2 gap-3" data-testid="gift-fields">
                   <div>
-                    <label className="text-xs tracking-[0.22em] uppercase text-[#5C757B]">In whose name</label>
+                    <label className="text-xs tracking-[0.22em] uppercase text-[#5C757B]">{t("donate.gift_to_label")}</label>
                     <input
                       type="text"
                       value={gift.to}
                       onChange={(e) => setGift({ ...gift, to: e.target.value })}
                       data-testid="gift-to-input"
-                      placeholder="e.g. Dadi, Arjun, Mom"
+                      placeholder={t("donate.gift_to_placeholder")}
                       maxLength={100}
                       className="mt-2 w-full border border-[#EBE7E0] rounded-full px-5 py-3 outline-none focus:border-[#5A8896] transition bg-white"
                     />
                   </div>
                   <div>
-                    <label className="text-xs tracking-[0.22em] uppercase text-[#5C757B]">Occasion</label>
+                    <label className="text-xs tracking-[0.22em] uppercase text-[#5C757B]">{t("donate.gift_occ_label")}</label>
                     <select
                       value={gift.occasion}
                       onChange={(e) => setGift({ ...gift, occasion: e.target.value })}
                       data-testid="gift-occasion-input"
                       className="mt-2 w-full border border-[#EBE7E0] rounded-full px-5 py-3 outline-none focus:border-[#5A8896] transition bg-white text-[#2C3E42]"
                     >
-                      <option>Birthday</option>
-                      <option>Anniversary</option>
-                      <option>In loving memory</option>
-                      <option>Festival</option>
-                      <option>Just because</option>
+                      <option value="Birthday">{t("donate.gift_occ_birthday")}</option>
+                      <option value="Anniversary">{t("donate.gift_occ_anniversary")}</option>
+                      <option value="In loving memory">{t("donate.gift_occ_memory")}</option>
+                      <option value="Festival">{t("donate.gift_occ_festival")}</option>
+                      <option value="Just because">{t("donate.gift_occ_just")}</option>
                     </select>
                   </div>
                 </div>
@@ -369,7 +368,7 @@ export default function Donate() {
           {/* Donor details */}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs tracking-[0.22em] uppercase text-[#5C757B]">Your name</label>
+              <label className="text-xs tracking-[0.22em] uppercase text-[#5C757B]">{t("donate.your_name")}</label>
               <input
                 required
                 type="text"
@@ -377,11 +376,11 @@ export default function Donate() {
                 data-testid="donor-name-input"
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 className="mt-2 w-full border border-[#EBE7E0] rounded-full px-5 py-3 outline-none focus:border-[#5A8896] transition bg-[#FDFBF7]"
-                placeholder="Who shall we thank?"
+                placeholder={t("donate.name_placeholder")}
               />
             </div>
             <div>
-              <label className="text-xs tracking-[0.22em] uppercase text-[#5C757B]">Email</label>
+              <label className="text-xs tracking-[0.22em] uppercase text-[#5C757B]">{t("donate.email")}</label>
               <input
                 required
                 type="email"
@@ -393,7 +392,7 @@ export default function Donate() {
               />
             </div>
             <div>
-              <label className="text-xs tracking-[0.22em] uppercase text-[#5C757B]">Phone (optional)</label>
+              <label className="text-xs tracking-[0.22em] uppercase text-[#5C757B]">{t("donate.phone")}</label>
               <input
                 type="tel"
                 value={form.phone}
@@ -404,14 +403,14 @@ export default function Donate() {
               />
             </div>
             <div>
-              <label className="text-xs tracking-[0.22em] uppercase text-[#5C757B]">Message (optional)</label>
+              <label className="text-xs tracking-[0.22em] uppercase text-[#5C757B]">{t("donate.message")}</label>
               <input
                 type="text"
                 value={form.message}
                 data-testid="donor-message-input"
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
                 className="mt-2 w-full border border-[#EBE7E0] rounded-full px-5 py-3 outline-none focus:border-[#5A8896] transition bg-[#FDFBF7]"
-                placeholder="A note of blessing"
+                placeholder={t("donate.message_placeholder")}
               />
             </div>
           </div>
@@ -424,18 +423,18 @@ export default function Donate() {
           >
             {loading ? (
               <>
-                <Loader2 className="animate-spin" size={18} /> Processing…
+                <Loader2 className="animate-spin" size={18} /> {t("donate.processing")}
               </>
             ) : (
               <>
-                <Heart size={18} /> Contribute ₹
+                <Heart size={18} /> {t("donate.contribute")} ₹
                 {finalAmount ? Number(finalAmount).toLocaleString("en-IN") : "0"}
               </>
             )}
           </button>
 
           <p className="mt-4 text-xs text-center text-[#5C757B]">
-            Secure payments by Razorpay · 100% reaches the cause · Every rupee counts
+            {t("donate.footnote")}
           </p>
         </form>
       </div>

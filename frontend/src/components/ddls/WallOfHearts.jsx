@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { API, IMAGES } from "@/lib/constants";
+import { useT } from "@/lib/i18n";
 import { Heart, Gift } from "lucide-react";
 
 // 30 points arranged on a heart curve, normalised to a 100x100 grid.
@@ -30,6 +31,7 @@ const HEART_POINTS = [
 const FALLBACK_AVATARS = [IMAGES.hero_kids, IMAGES.kids_looking, IMAGES.kids_smile, IMAGES.nature_planting];
 
 export default function WallOfHearts() {
+  const { t } = useT();
   const [donors, setDonors] = useState([]);
   const [rotationIdx, setRotationIdx] = useState(0);
   const [hovered, setHovered] = useState(null);
@@ -69,19 +71,18 @@ export default function WallOfHearts() {
       <div className="ddls-container">
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 text-xs tracking-[0.28em] uppercase text-[#D99F80] font-medium">
-            <Heart size={14} fill="#D99F80" /> Wall of Hearts
+            <Heart size={14} fill="#D99F80" /> {t("wall.kicker")}
           </div>
           <h2
             data-testid="wall-title"
             className="mt-4 font-serif text-4xl sm:text-5xl lg:text-6xl tracking-tight text-[#2C3E42] leading-[1.05]"
           >
-            The faces behind
+            {t("wall.title_1")}
             <br />
-            <span className="italic text-[#5A8896]">every smile we create.</span>
+            <span className="italic text-[#5A8896]">{t("wall.title_em")}</span>
           </h2>
           <p className="mt-6 text-lg text-[#5C757B] leading-relaxed">
-            Each photo here is a heart that chose to help. Every time someone new gives,
-            this heart grows fuller — just like ours.
+            {t("wall.lead")}
           </p>
         </div>
 
@@ -170,7 +171,7 @@ export default function WallOfHearts() {
               >
                 <div className="font-serif text-lg text-[#2C3E42]">{hovered.name}</div>
                 <div className="text-sm text-[#5A8896] font-medium">
-                  ₹{new Intl.NumberFormat("en-IN").format(hovered.amount)} contributed
+                  ₹{new Intl.NumberFormat("en-IN").format(hovered.amount)} {t("wall.contributed")}
                 </div>
                 {hovered.gift_to && (
                   <div
@@ -197,21 +198,21 @@ export default function WallOfHearts() {
               className="text-center mt-10 max-w-md mx-auto"
             >
               <p className="font-serif italic text-lg text-[#5C757B]">
-                The first heart on this wall could be yours.
+                {t("wall.empty")}
               </p>
               <a
                 href="#donate"
                 data-testid="wall-cta-btn"
                 className="mt-5 inline-flex items-center gap-2 bg-[#5A8896] text-white hover:bg-[#46707C] px-6 py-3 rounded-full transition-all duration-300 font-medium text-sm shadow-sm hover:shadow-md"
               >
-                <Heart size={14} /> Be the first
+                <Heart size={14} /> {t("wall.be_first")}
               </a>
             </div>
           )}
 
           {!isEmpty && donors.length > HEART_POINTS.length && (
             <p className="text-center mt-12 text-sm text-[#5C757B]">
-              {donors.length} hearts are rotating above — each one a story.
+              {donors.length} {t("wall.rotate_note")}
             </p>
           )}
         </div>

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { API } from "@/lib/constants";
+import { useT } from "@/lib/i18n";
 import { Link } from "react-router-dom";
 import { ArrowRight, Calendar, MapPin, Users } from "lucide-react";
 
-function ProjectCard({ p }) {
+function ProjectCard({ p, t }) {
   return (
     <div
       data-testid={`project-card-${p.id}`}
@@ -28,7 +29,7 @@ function ProjectCard({ p }) {
                 : "bg-[#D99F80]/15 text-[#D99F80]"
             }`}
           >
-            {p.status}
+            {p.status === "completed" ? t("projects.status_completed") : t("projects.status_upcoming")}
           </span>
           <span className="text-[#5C757B] flex items-center gap-1">
             <Calendar size={12} /> {p.date}
@@ -44,7 +45,7 @@ function ProjectCard({ p }) {
           )}
           {p.children_helped !== null && p.children_helped !== undefined && (
             <span className="flex items-center gap-1">
-              <Users size={12} /> {p.children_helped} children
+              <Users size={12} /> {p.children_helped} {t("projects.children")}
             </span>
           )}
         </div>
@@ -54,6 +55,7 @@ function ProjectCard({ p }) {
 }
 
 export default function ProjectsPreview() {
+  const { t } = useT();
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
@@ -77,12 +79,12 @@ export default function ProjectsPreview() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div className="max-w-2xl">
             <div className="text-xs tracking-[0.28em] uppercase text-[#D99F80] font-medium">
-              Our Work
+              {t("projects.kicker")}
             </div>
             <h2 className="mt-4 font-serif text-4xl sm:text-5xl tracking-tight text-[#2C3E42] leading-tight">
-              Stories we&rsquo;re
+              {t("projects.preview_title_1")}
               <br />
-              <span className="italic text-[#5A8896]">writing together.</span>
+              <span className="italic text-[#5A8896]">{t("projects.preview_title_em")}</span>
             </h2>
           </div>
           <Link
@@ -90,7 +92,7 @@ export default function ProjectsPreview() {
             data-testid="view-all-projects-link"
             className="inline-flex items-center gap-2 text-[#5A8896] hover:text-[#46707C] transition font-medium"
           >
-            View all projects <ArrowRight size={16} />
+            {t("projects.view_all")} <ArrowRight size={16} />
           </Link>
         </div>
       </div>
@@ -99,16 +101,14 @@ export default function ProjectsPreview() {
         <div className="ddls-container">
           <div className="bg-white border border-[#EBE7E0] rounded-[1.75rem] p-10 text-center max-w-2xl mx-auto">
             <p className="font-serif italic text-xl text-[#5C757B] leading-relaxed">
-              Our first stories are being quietly written.
-              <br />
-              Come back soon — or help us start one.
+              {t("projects.empty_quiet")}
             </p>
             <a
               href="#donate"
               data-testid="projects-empty-cta"
               className="mt-6 inline-flex items-center gap-2 bg-[#5A8896] text-white hover:bg-[#46707C] px-6 py-3 rounded-full font-medium text-sm transition"
             >
-              Start a story
+              {t("projects.start_story")}
             </a>
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function ProjectsPreview() {
         <div className="overflow-x-auto no-scrollbar pb-6">
           <div className="flex gap-6 px-6 md:px-12 lg:px-20" style={{ width: "max-content" }}>
             {projects.map((p) => (
-              <ProjectCard key={p.id} p={p} />
+              <ProjectCard key={p.id} p={p} t={t} />
             ))}
           </div>
         </div>

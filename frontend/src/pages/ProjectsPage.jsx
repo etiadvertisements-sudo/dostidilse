@@ -2,16 +2,17 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Navigation from "@/components/ddls/Navigation";
 import Footer from "@/components/ddls/Footer";
-import { API } from "@/lib/constants";
+import { API, IMAGES } from "@/lib/constants";
+import { useT } from "@/lib/i18n";
 import { Calendar, MapPin, Users, Heart } from "lucide-react";
 
-const FILTERS = [
-  { key: "all", label: "All" },
-  { key: "completed", label: "Completed" },
-  { key: "upcoming", label: "Upcoming" },
-];
-
 export default function ProjectsPage() {
+  const { t } = useT();
+  const FILTERS = [
+    { key: "all", label: t("projects.filter_all") },
+    { key: "completed", label: t("projects.filter_completed") },
+    { key: "upcoming", label: t("projects.filter_upcoming") },
+  ];
   const [projects, setProjects] = useState([]);
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
@@ -35,14 +36,23 @@ export default function ProjectsPage() {
 
       <section className="py-16 md:py-24">
         <div className="ddls-container">
-          <div className="max-w-3xl">
-            <div className="text-xs tracking-[0.28em] uppercase text-[#D99F80] font-medium">Our Work</div>
-            <h1 className="mt-4 font-serif text-5xl sm:text-6xl tracking-tight text-[#2C3E42] leading-[1.05]">
-              Every project, <span className="italic text-[#5A8896]">a small promise.</span>
-            </h1>
-            <p className="mt-6 text-lg text-[#5C757B] leading-relaxed">
-              Here&rsquo;s everything we&rsquo;re building — the ones behind us, and the ones ahead.
-            </p>
+          <div className="grid lg:grid-cols-12 gap-10 items-center">
+            <div className="lg:col-span-7 max-w-3xl">
+              <div className="text-xs tracking-[0.28em] uppercase text-[#D99F80] font-medium">{t("projects.kicker")}</div>
+              <h1 className="mt-4 font-serif text-5xl sm:text-6xl tracking-tight text-[#2C3E42] leading-[1.05]">
+                {t("projects.page_title_1")} <span className="italic text-[#5A8896]">{t("projects.page_title_em")}</span>
+              </h1>
+              <p className="mt-6 text-lg text-[#5C757B] leading-relaxed">
+                {t("projects.page_lead")}
+              </p>
+            </div>
+            <div className="lg:col-span-5">
+              <img
+                src={IMAGES.village_school}
+                alt="On the ground"
+                className="w-full rounded-[2rem] object-cover aspect-[5/4]"
+              />
+            </div>
           </div>
 
           {/* Filters */}
@@ -65,12 +75,12 @@ export default function ProjectsPage() {
 
           <div className="mt-10">
             {loading ? (
-              <div className="text-center text-[#5C757B] py-16">Loading…</div>
+              <div className="text-center text-[#5C757B] py-16">{t("projects.loading")}</div>
             ) : projects.length === 0 ? (
               <div className="bg-white border border-[#EBE7E0] rounded-[1.75rem] p-12 text-center max-w-2xl mx-auto">
                 <Heart size={22} className="mx-auto text-[#D99F80]" />
                 <p className="mt-4 font-serif italic text-xl text-[#5C757B] leading-relaxed">
-                  No projects here yet. The first one is on its way.
+                  {t("projects.empty_none")}
                 </p>
               </div>
             ) : (
@@ -99,7 +109,7 @@ export default function ProjectsPage() {
                               : "bg-[#D99F80]/15 text-[#D99F80]"
                           }`}
                         >
-                          {p.status}
+                          {p.status === "completed" ? t("projects.status_completed") : t("projects.status_upcoming")}
                         </span>
                         <span className="text-[#5C757B] flex items-center gap-1">
                           <Calendar size={12} /> {p.date}
@@ -115,7 +125,7 @@ export default function ProjectsPage() {
                         )}
                         {p.children_helped !== null && p.children_helped !== undefined && (
                           <span className="flex items-center gap-1">
-                            <Users size={12} /> {p.children_helped} children
+                            <Users size={12} /> {p.children_helped} {t("projects.children")}
                           </span>
                         )}
                       </div>

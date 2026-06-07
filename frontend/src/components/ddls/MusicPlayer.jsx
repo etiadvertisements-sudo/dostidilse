@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Music, Volume2, VolumeX, Play } from "lucide-react";
+import { useT } from "@/lib/i18n";
 
 const AUDIO_SRC = "/site-ambience.mp3";
 const PREF_KEY = "ddls_music_pref"; // "on" | "off"
 
 export default function MusicPlayer() {
+  const { t } = useT();
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [needsGesture, setNeedsGesture] = useState(false);
@@ -83,7 +85,7 @@ export default function MusicPlayer() {
       <button
         type="button"
         onClick={toggle}
-        aria-label={isPlaying ? "Pause music" : "Play music"}
+        aria-label={isPlaying ? t("music.pause") : t("music.play")}
         data-testid="music-toggle"
         className={`fixed left-4 bottom-4 z-[60] inline-flex items-center gap-2 bg-white/95 backdrop-blur-sm border border-[#EBE7E0] rounded-full shadow-md hover:shadow-lg hover:border-[#5A8896] text-[#2C3E42] transition-all duration-300 overflow-hidden ${
           needsGesture ? "pl-3 pr-4 py-2 music-pulse" : "p-2.5"
@@ -92,7 +94,7 @@ export default function MusicPlayer() {
         {needsGesture && !isPlaying ? (
           <>
             <Play size={14} className="text-[#5A8896]" fill="#5A8896" />
-            <span className="text-xs font-medium whitespace-nowrap">Play music</span>
+            <span className="text-xs font-medium whitespace-nowrap">{t("music.play")}</span>
           </>
         ) : isPlaying ? (
           <Volume2 size={16} className="text-[#5A8896]" />

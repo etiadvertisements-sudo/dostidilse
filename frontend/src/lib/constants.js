@@ -5,10 +5,22 @@ export const CONTACT_EMAIL = "connect@dostidilse.org";
 export const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
 
-// Stable Unsplash URLs (photo-id only, no ixid tracking token that expires)
+// Indian-context Unsplash photos — stable photo IDs (no expiring ixid tokens).
 export const IMAGES = {
-  hero_kids: "https://images.unsplash.com/photo-1503919005314-30d93d07d823?auto=format&fit=crop&w=1200&q=80",
-  kids_looking: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80",
-  kids_smile: "https://images.unsplash.com/photo-1522661067900-ab829854a57f?auto=format&fit=crop&w=1200&q=80",
+  // Indian girl with bright eyes (hero)
+  hero_kids: "https://images.unsplash.com/photo-1604881991720-f91add269bed?auto=format&fit=crop&w=1200&q=80",
+  // Indian children in a doorway
+  kids_looking: "https://images.unsplash.com/photo-1610208693777-da41b6f1f76a?auto=format&fit=crop&w=1200&q=80",
+  // Indian children smiling together
+  kids_smile: "https://images.unsplash.com/photo-1591025207161-9d6b56ce6f97?auto=format&fit=crop&w=1200&q=80",
+  // Indian schoolgirl studying
+  kids_studying: "https://images.unsplash.com/photo-1497486751825-1233686d5d80?auto=format&fit=crop&w=1200&q=80",
+  // Hands planting a sapling (nature)
   nature_planting: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1200&q=80",
+  // Indian classroom / village school
+  village_school: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80",
+  // Diyas / festival lamps — quiet emotional accent
+  diya_lights: "https://images.unsplash.com/photo-1574087220842-30b53d22dd5d?auto=format&fit=crop&w=1200&q=80",
+  // Indian woman holding child (community / family)
+  mother_child: "https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?auto=format&fit=crop&w=1200&q=80",
 };

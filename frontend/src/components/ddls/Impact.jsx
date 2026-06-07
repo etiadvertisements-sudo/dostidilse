@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { API } from "@/lib/constants";
+import { useT } from "@/lib/i18n";
 import { Users, Sprout, Heart, Wallet } from "lucide-react";
 
 function StatCard({ icon: Icon, value, label, suffix, testId }) {
@@ -20,6 +21,7 @@ function StatCard({ icon: Icon, value, label, suffix, testId }) {
 }
 
 export default function Impact() {
+  const { t } = useT();
   const [stats, setStats] = useState({
     total_raised: 0,
     donors_count: 0,
@@ -47,58 +49,31 @@ export default function Impact() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
           <div className="max-w-2xl">
             <div className="text-xs tracking-[0.28em] uppercase text-[#D99F80] font-medium">
-              Transparency
+              {t("impact.kicker")}
             </div>
             <h2
               id="transparency"
               data-testid="impact-title"
               className="mt-4 font-serif text-4xl sm:text-5xl tracking-tight text-[#2C3E42] leading-tight"
             >
-              We&rsquo;re starting today.
+              {t("impact.title_1")}
               <br />
-              <span className="italic text-[#5A8896]">Every number begins at zero.</span>
+              <span className="italic text-[#5A8896]">{t("impact.title_em")}</span>
             </h2>
           </div>
-          <p className="max-w-md text-[#5C757B] leading-relaxed">
-            We&rsquo;re building this from scratch — with honesty as our first currency.
-            These numbers update live, so you&rsquo;ll always see where we stand.
-          </p>
+          <p className="max-w-md text-[#5C757B] leading-relaxed">{t("impact.lead")}</p>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-          <StatCard
-            testId="stat-students"
-            icon={Users}
-            value={stats.students_helped}
-            label="Students Supported"
-          />
-          <StatCard
-            testId="stat-raised"
-            icon={Wallet}
-            value={`₹${formatINR(stats.total_raised)}`}
-            label="Contributions Received"
-          />
-          <StatCard
-            testId="stat-donors"
-            icon={Heart}
-            value={stats.donors_count}
-            label="Kind Hearts"
-          />
-          <StatCard
-            testId="stat-projects"
-            icon={Sprout}
-            value={stats.projects_completed}
-            label="Projects Completed"
-          />
+          <StatCard testId="stat-students" icon={Users} value={stats.students_helped} label={t("impact.stat_students")} />
+          <StatCard testId="stat-raised" icon={Wallet} value={`₹${formatINR(stats.total_raised)}`} label={t("impact.stat_raised")} />
+          <StatCard testId="stat-donors" icon={Heart} value={stats.donors_count} label={t("impact.stat_hearts")} />
+          <StatCard testId="stat-projects" icon={Sprout} value={stats.projects_completed} label={t("impact.stat_projects")} />
         </div>
 
         <div className="mt-12 bg-[#F2EFE9]/60 border border-[#EBE7E0] rounded-[1.75rem] p-8 md:p-10">
-          <h3 className="font-serif text-2xl text-[#2C3E42]">Our transparency promise</h3>
-          <p className="mt-3 text-[#5C757B] leading-relaxed max-w-3xl">
-            100% of every contribution will go directly to the cause. We&rsquo;ll publish
-            where your kindness went — which community, which school, which tree — so you can
-            follow it from the moment it leaves your hands to the moment it reaches a child&rsquo;s.
-          </p>
+          <h3 className="font-serif text-2xl text-[#2C3E42]">{t("impact.promise_title")}</h3>
+          <p className="mt-3 text-[#5C757B] leading-relaxed max-w-3xl">{t("impact.promise_text")}</p>
         </div>
       </div>
     </section>

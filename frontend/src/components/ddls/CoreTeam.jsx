@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { API } from "@/lib/constants";
+import { useT } from "@/lib/i18n";
 import { ChevronLeft, ChevronRight, Users } from "lucide-react";
 
 function TeamCard({ m }) {
@@ -42,6 +43,7 @@ function TeamCard({ m }) {
 }
 
 export default function CoreTeam() {
+  const { t } = useT();
   const [team, setTeam] = useState([]);
   const scrollRef = useRef(null);
 
@@ -73,19 +75,18 @@ export default function CoreTeam() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div className="max-w-2xl">
             <div className="text-xs tracking-[0.28em] uppercase text-[#D99F80] font-medium">
-              The Heart Behind
+              {t("team.kicker")}
             </div>
             <h2
               data-testid="team-title"
               className="mt-4 font-serif text-4xl sm:text-5xl lg:text-6xl tracking-tight text-[#2C3E42] leading-[1.05]"
             >
-              Ordinary people,
+              {t("team.title_1")}
               <br />
-              <span className="italic text-[#5A8896]">extraordinary intent.</span>
+              <span className="italic text-[#5A8896]">{t("team.title_em")}</span>
             </h2>
             <p className="mt-6 text-lg text-[#5C757B] leading-relaxed">
-              The hands and hearts who show up every day so a child somewhere can keep going. Hover
-              to know them a little better.
+              {t("team.lead")}
             </p>
           </div>
 

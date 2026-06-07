@@ -1,7 +1,9 @@
 import { IMAGES } from "@/lib/constants";
+import { useT } from "@/lib/i18n";
 import { ArrowRight, Heart } from "lucide-react";
 
 export default function Hero() {
+  const { t } = useT();
   return (
     <section
       id="top"
@@ -13,7 +15,7 @@ export default function Hero() {
           <div className="fade-up inline-flex items-center gap-2 bg-[#F2EFE9] border border-[#EBE7E0] px-4 py-1.5 rounded-full">
             <Heart size={14} className="text-[#D99F80]" strokeWidth={2} />
             <span className="text-xs tracking-[0.22em] uppercase text-[#5C757B]">
-              Because every child matters
+              {t("hero.kicker")}
             </span>
           </div>
 
@@ -21,21 +23,18 @@ export default function Hero() {
             data-testid="hero-title"
             className="fade-up fade-up-delay-1 mt-6 font-serif text-5xl sm:text-6xl lg:text-[5.5rem] leading-[1.02] tracking-tight text-[#2C3E42]"
           >
-            She walks <span className="italic text-[#5A8896]">two hours</span>
+            {t("hero.title_1")} <span className="italic text-[#5A8896]">{t("hero.title_em")}</span>
             <br />
-            to read a book
+            {t("hero.title_2")}
             <br />
-            that isn&rsquo;t hers.
+            {t("hero.title_3")}
           </h1>
 
           <p
             data-testid="hero-subtitle"
             className="fade-up fade-up-delay-2 mt-8 text-lg md:text-xl leading-relaxed text-[#5C757B] max-w-xl"
           >
-            Somewhere, a little girl is borrowing the same torn page for the third week.
-            Somewhere, a boy is pretending hunger doesn&rsquo;t matter.
-            At <span className="text-[#2C3E42] font-medium">Dosti Dil Se</span>, we believe
-            a kind hand — shown up at the right moment — can quietly rewrite a childhood.
+            {t("hero.subtitle")}
           </p>
 
           <div className="fade-up fade-up-delay-3 mt-10 flex flex-col sm:flex-row gap-4">
@@ -44,7 +43,7 @@ export default function Hero() {
               data-testid="hero-donate-btn"
               className="group inline-flex items-center justify-center gap-2 bg-[#5A8896] text-white hover:bg-[#46707C] px-8 py-4 rounded-full transition-all duration-300 shadow-sm hover:shadow-md font-medium"
             >
-              Become part of their story
+              {t("hero.cta_donate")}
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </a>
             <a
@@ -52,19 +51,19 @@ export default function Hero() {
               data-testid="hero-mission-btn"
               className="inline-flex items-center justify-center gap-2 bg-transparent border border-[#5A8896]/60 text-[#5A8896] hover:bg-[#5A8896] hover:text-white px-8 py-4 rounded-full transition-all duration-300 font-medium"
             >
-              What we do
+              {t("hero.cta_mission")}
             </a>
           </div>
 
           <div className="fade-up fade-up-delay-4 mt-12 flex items-center gap-6 text-sm text-[#5C757B]">
             <div>
               <div className="font-serif text-2xl text-[#2C3E42]">₹10</div>
-              <div className="text-xs uppercase tracking-wider">Every rupee counts</div>
+              <div className="text-xs uppercase tracking-wider">{t("hero.stat1_label")}</div>
             </div>
             <div className="h-8 w-px bg-[#EBE7E0]" />
             <div>
               <div className="font-serif text-2xl text-[#2C3E42]">100%</div>
-              <div className="text-xs uppercase tracking-wider">Goes to the cause</div>
+              <div className="text-xs uppercase tracking-wider">{t("hero.stat2_label")}</div>
             </div>
           </div>
         </div>
@@ -83,8 +82,8 @@ export default function Hero() {
                 <Heart size={18} className="text-[#D99F80]" fill="#D99F80" />
               </div>
               <div className="text-xs">
-                <div className="font-medium text-[#2C3E42]">One small step.</div>
-                <div className="text-[#5C757B]">A thousand possibilities.</div>
+                <div className="font-medium text-[#2C3E42]">{t("hero.badge_l1")}</div>
+                <div className="text-[#5C757B]">{t("hero.badge_l2")}</div>
               </div>
             </div>
           </div>
