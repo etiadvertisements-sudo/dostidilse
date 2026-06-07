@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { LOGO_URL, CONTACT_EMAIL } from "@/lib/constants";
 import { Heart } from "lucide-react";
-
 export default function Footer() {
   return (
     <footer data-testid="site-footer" className="border-t border-[#EBE7E0] bg-[#FDFBF7]">
@@ -46,13 +45,6 @@ export default function Footer() {
             {CONTACT_EMAIL}
           </a>
           <p className="mt-3 text-sm text-[#5C757B]">dostidilse.org</p>
-          <Link
-            to="/admin/login"
-            data-testid="footer-admin-link"
-            className="mt-6 inline-block text-xs text-[#5C757B]/70 hover:text-[#5A8896] transition"
-          >
-            Admin
-          </Link>
         </div>
       </div>
 
