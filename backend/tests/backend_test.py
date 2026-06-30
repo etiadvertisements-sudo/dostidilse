@@ -346,9 +346,9 @@ class TestCreateOrder:
         uuid.UUID(data["donation_id"])
         assert "_id" not in data
 
-    def test_create_order_below_50_returns_422(self, client):
+    def test_create_order_below_min_returns_422(self, client):
         r = client.post(f"{API}/donations/create-order", json={
-            "amount": 49, "name": "TEST_Below", "email": "below@example.com"})
+            "amount": 5, "name": "TEST_Below", "email": "below@example.com"})
         assert r.status_code == 422
 
     def test_create_order_bad_email_422(self, client):
@@ -415,29 +415,186 @@ class TestAdminLists:
             assert "_id" not in m
 
 
-# ---------- Team (public, seeded) ----------
+# ---------- Team (public; may be empty in this build) ----------
 class TestTeam:
-    def test_team_returns_at_least_4_members(self, client):
+    def test_team_endpoint_returns_list(self, client):
         r = client.get(f"{API}/team")
         assert r.status_code == 200
         items = r.json()
         assert isinstance(items, list)
-        assert len(items) >= 4, f"Expected >= 4 seeded team members, got {len(items)}"
         for m in items:
             assert "_id" not in m
             for k in ("id", "name", "role", "bio", "created_at"):
                 assert k in m
 
-    def test_team_sorted_by_order(self, client):
+    def test_team_sorted_by_order_if_present(self, client):
         items = client.get(f"{API}/team").json()
-        orders = [m.get("order", 0) for m in items]
-        assert orders == sorted(orders), f"Team not sorted by order ascending: {orders}"
+        if items:
+            orders = [m.get("order", 0) for m in items]
+            assert orders == sorted(orders)
 
-    def test_team_contains_seeded_names(self, client):
-        items = client.get(f"{API}/team").json()
-        names = {m["name"] for m in items}
-        expected = {"Aarav Sharma", "Meera Iyer", "Rohan Patil", "Anjali Deshmukh"}
-        assert expected.issubset(names), f"Missing seeded names. Present: {names}"
+
+# ---------- Coordinator Applications (NEW) ----------
+class TestCoordinatorApply:
+    """Public POST /api/coordinators/apply + admin approve/reject/delete flows."""
+
+    def _payload(self, email=None, **overrides):
+        base = {
+            "name": "TEST_Coord_Applicant",
+            "email": email or f"test_coord_{uuid.uuid4().hex[:8]}@example.com",
+            "phone": "+91-9999999999",
+            "city": "Pune",
+            "state": "Maharashtra",
+            "role_preference": "city",
+            "occupation": "Engineer",
+            "age": 28,
+            "profile_url": "https://linkedin.com/in/test",
+            "why_join": "I want to help children get access to quality education and mentorship.",
+            "impact_goal": "Reach at least 50 children in my city within the first six months.",
+            "monthly_hours": 15,
+            "past_experience": "Volunteered at local NGO for 2 years.",
+            "referral_source": "Instagram",
+        }
+        base.update(overrides)
+        return base
+
+    def test_apply_success_returns_pending(self, client):
+        payload = self._payload()
+        r = client.post(f"{API}/coordinators/apply", json=payload)
+        assert r.status_code == 200, r.text
+        data = r.json()
+        assert data["status"] == "pending"
+        assert data["email"] == payload["email"].lower()
+        assert data["role_preference"] == "city"
+        uuid.UUID(data["id"])
+        assert data["decided_at"] is None
+        assert "_id" not in data
+        # cleanup
+        _db.coordinator_applications.delete_one({"id": data["id"]})
+
+    def test_apply_duplicate_pending_returns_409(self, client):
+        email = f"test_dup_{uuid.uuid4().hex[:8]}@example.com"
+        r1 = client.post(f"{API}/coordinators/apply", json=self._payload(email=email))
+        assert r1.status_code == 200
+        r2 = client.post(f"{API}/coordinators/apply", json=self._payload(email=email))
+        assert r2.status_code == 409
+        # cleanup
+        _db.coordinator_applications.delete_one({"id": r1.json()["id"]})
+
+    def test_apply_missing_required_returns_422(self, client):
+        bad = {"name": "x", "email": "bad@example.com"}  # missing fields
+        r = client.post(f"{API}/coordinators/apply", json=bad)
+        assert r.status_code == 422
+
+    def test_apply_why_join_too_short_returns_422(self, client):
+        p = self._payload()
+        p["why_join"] = "too short"  # < 20 chars
+        r = client.post(f"{API}/coordinators/apply", json=p)
+        assert r.status_code == 422
+
+    def test_apply_invalid_role_preference_422(self, client):
+        p = self._payload()
+        p["role_preference"] = "country"
+        r = client.post(f"{API}/coordinators/apply", json=p)
+        assert r.status_code == 422
+
+
+class TestCoordinatorAdmin:
+    """Admin protected endpoints for managing coordinator applications."""
+
+    def test_list_requires_token(self, client):
+        r = client.get(f"{API}/admin/coordinators")
+        assert r.status_code == 401
+
+    def test_approve_requires_token(self, client):
+        r = client.post(f"{API}/admin/coordinators/some-id/approve")
+        assert r.status_code == 401
+
+    def test_reject_requires_token(self, client):
+        r = client.post(f"{API}/admin/coordinators/some-id/reject")
+        assert r.status_code == 401
+
+    def test_delete_requires_token(self, client):
+        r = client.delete(f"{API}/admin/coordinators/some-id")
+        assert r.status_code == 401
+
+    def test_list_returns_array(self, admin_client):
+        r = admin_client.get(f"{API}/admin/coordinators")
+        assert r.status_code == 200
+        assert isinstance(r.json(), list)
+        for it in r.json():
+            assert "_id" not in it
+
+    def test_approve_flips_status_and_sets_decided_at(self, client, admin_client):
+        payload = {
+            "name": "TEST_Coord_Approve", "email": f"test_approve_{uuid.uuid4().hex[:8]}@example.com",
+            "phone": "+91-9000000001", "city": "Mumbai", "state": "Maharashtra",
+            "role_preference": "city",
+            "why_join": "I want to make a real difference in my community.",
+            "impact_goal": "Help 100 underprivileged kids in Mumbai this year.",
+            "monthly_hours": 10,
+        }
+        c = client.post(f"{API}/coordinators/apply", json=payload)
+        assert c.status_code == 200
+        app_id = c.json()["id"]
+
+        a = admin_client.post(f"{API}/admin/coordinators/{app_id}/approve")
+        assert a.status_code == 200, a.text
+        data = a.json()
+        assert data["status"] == "approved"
+        assert data["decided_at"] is not None
+
+        # cleanup
+        d = admin_client.delete(f"{API}/admin/coordinators/{app_id}")
+        assert d.status_code == 200
+
+    def test_reject_flips_status(self, client, admin_client):
+        payload = {
+            "name": "TEST_Coord_Reject", "email": f"test_reject_{uuid.uuid4().hex[:8]}@example.com",
+            "phone": "+91-9000000002", "city": "Delhi", "state": "Delhi",
+            "role_preference": "state",
+            "why_join": "Education is the foundation for change in our country.",
+            "impact_goal": "Coordinate at least 5 weekend volunteer drives this year.",
+            "monthly_hours": 8,
+        }
+        c = client.post(f"{API}/coordinators/apply", json=payload)
+        assert c.status_code == 200
+        app_id = c.json()["id"]
+        r = admin_client.post(f"{API}/admin/coordinators/{app_id}/reject")
+        assert r.status_code == 200
+        assert r.json()["status"] == "rejected"
+        assert r.json()["decided_at"] is not None
+        # cleanup
+        admin_client.delete(f"{API}/admin/coordinators/{app_id}")
+
+    def test_approve_nonexistent_404(self, admin_client):
+        r = admin_client.post(f"{API}/admin/coordinators/non-existent-id/approve")
+        assert r.status_code == 404
+
+    def test_delete_nonexistent_404(self, admin_client):
+        r = admin_client.delete(f"{API}/admin/coordinators/non-existent-id")
+        assert r.status_code == 404
+
+    def test_list_filter_by_status(self, admin_client):
+        r = admin_client.get(f"{API}/admin/coordinators", params={"status": "pending"})
+        assert r.status_code == 200
+        for it in r.json():
+            assert it["status"] == "pending"
+
+
+# ---------- Admin: other protected verbs require token ----------
+class TestAdminProtections:
+    def test_admin_team_create_requires_token(self, client):
+        r = client.post(f"{API}/admin/team", json={"name": "x", "role": "x", "bio": "x"})
+        assert r.status_code == 401
+
+    def test_admin_team_delete_requires_token(self, client):
+        r = client.delete(f"{API}/admin/team/non-existent-id")
+        assert r.status_code == 401
+
+    def test_admin_projects_delete_requires_token(self, client):
+        r = client.delete(f"{API}/admin/projects/non-existent-id")
+        assert r.status_code == 401
 
 
 # ---------- Contact ----------
